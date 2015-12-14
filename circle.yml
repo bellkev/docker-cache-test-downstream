@@ -3,13 +3,13 @@ machine:
     - docker
 dependencies:
   override:
-    - docker build -t bellkev/docker-cache-test-downstream:$CIRCLE_SHA1 .
+    - docker build -t bellkev/docker-cache-test-downstream:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM .
 test:
   override:
-    - docker run bellkev/docker-cache-test-downstream:$CIRCLE_SHA1
+    - docker run bellkev/docker-cache-test-downstream:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM
 deployment:
   master:
     branch: master
     commands:
       - docker login -u $DOCKER_USER -e $DOCKER_EMAIL -p $DOCKER_PASS
-      - docker push bellkev/docker-cache-test-downstream:$CIRCLE_SHA1
+      - docker push bellkev/docker-cache-test-downstream:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM
