@@ -3,9 +3,13 @@ machine:
     - docker
 dependencies:
   override:
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     - docker build -t bellkev/docker-cache-test-downstream:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM test
     - docker build -t bellkev/docker-cache-test-downstream-ubuntu:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM ubuntu
     - docker build -t bellkev/docker-cache-test-downstream-python:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM python
+    - mkdir -p ~/docker; docker save bellkev/docker-cache-test-downstream:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM bellkev/docker-cache-test-downstream-ubuntu:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM bellkev/docker-cache-test-downstream-python:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM > ~/docker/image.tar
+  cache_directories:
+    - "~/docker"
 test:
   override:
     - docker run bellkev/docker-cache-test-downstream:$CIRCLE_SHA1-$CIRCLE_BUILD_NUM
